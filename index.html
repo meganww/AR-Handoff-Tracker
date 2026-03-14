@@ -86,14 +86,14 @@ td input[type=text]{width:90px}
     <th>Expected Build</th><th>Net Change</th><th>Handoff Check</th><th>Status</th>
   </tr></thead>
   <tbody id="palletBody"><tr><td class="op-label">Refurb</td>
-    <td><input type="number" step="0.1" id="p-sos-0" value="8"></td>
-    <td><input type="number" step="0.1" id="p-build-0" value="1"></td>
-    <td><input type="number" step="0.1" id="p-proc-0" value="2"></td>
-    <td id="p-eos-0">7</td>
+    <td><input type="number" step="0.1" id="p-sos-0" value="0"></td>
+    <td><input type="number" step="0.1" id="p-build-0" value="0"></td>
+    <td><input type="number" step="0.1" id="p-proc-0" value="0"></td>
+    <td id="p-eos-0">0</td>
     <td style="color:#888">1.5/shift</td>
-    <td id="p-net-0">-1</td>
-    <td id="p-hand-0" class="pass">✓ Controlled</td>
-    <td id="p-stat-0" class="pass">WIP Controlled</td></tr><tr><td class="op-label">Shoes</td>
+    <td id="p-net-0">0</td>
+    <td id="p-hand-0" class="pass">✓ Clean Handoff</td>
+    <td id="p-stat-0" class="pass">Clean Handoff</td></tr><tr><td class="op-label">Shoes</td>
     <td><input type="number" step="0.1" id="p-sos-1" value="0"></td>
     <td><input type="number" step="0.1" id="p-build-1" value="0"></td>
     <td><input type="number" step="0.1" id="p-proc-1" value="0"></td>
@@ -102,14 +102,14 @@ td input[type=text]{width:90px}
     <td id="p-net-1">0</td>
     <td id="p-hand-1" class="pass">✓ Clean Handoff</td>
     <td id="p-stat-1" class="pass">Clean Handoff</td></tr><tr><td class="op-label">Problem Solve</td>
-    <td><input type="number" step="0.1" id="p-sos-2" value="1.5"></td>
-    <td><input type="number" step="0.1" id="p-build-2" value="1"></td>
-    <td><input type="number" step="0.1" id="p-proc-2" value="1"></td>
-    <td id="p-eos-2">1.5</td>
+    <td><input type="number" step="0.1" id="p-sos-2" value="0"></td>
+    <td><input type="number" step="0.1" id="p-build-2" value="0"></td>
+    <td><input type="number" step="0.1" id="p-proc-2" value="0"></td>
+    <td id="p-eos-2">0</td>
     <td style="color:#888">0.5/shift</td>
     <td id="p-net-2">0</td>
-    <td id="p-hand-2" class="pass">✓ Controlled</td>
-    <td id="p-stat-2" class="pass">WIP Controlled</td></tr></tbody>
+    <td id="p-hand-2" class="pass">✓ Clean Handoff</td>
+    <td id="p-stat-2" class="pass">Clean Handoff</td></tr></tbody>
 </table>
 
 <h2>Buffer / WIP Checks</h2>
@@ -180,17 +180,7 @@ td input[type=text]{width:90px}
   <button class="btn btn-p" onclick="renderHistory()">Apply</button>
   <button class="btn btn-d" onclick="if(confirm('Delete ALL history?')){localStorage.removeItem('shiftHist');renderHistory()}">Clear All History</button>
 </div>
-<div id="historyList"><div class="hist-entry" onclick="this.classList.toggle('expanded')">
-      <div class="hist-header">
-        <span class="hist-date">2026-03-14 – BHN</span>
-        <span class="fail">NEEDS ATTENTION (2 issues)</span>
-        <span>
-          <button class="btn btn-p" onclick="event.stopPropagation();loadSnap('2026-03-14_BHN')">Load</button>
-          <button class="btn btn-d" onclick="event.stopPropagation();delHist('2026-03-14_BHN')">✗</button>
-        </span>
-      </div>
-      <div class="hist-detail"><table class="hist-ops"><thead><tr><th>Operation</th><th>SOS</th><th>Build</th><th>Proc</th><th>EOS</th><th>Net</th><th>Status</th></tr></thead><tbody><tr><td class="op-label">Refurb</td><td>8</td><td>1</td><td>2</td><td>7</td><td>-1</td><td>WIP Controlled</td></tr><tr><td class="op-label">Shoes</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>Clean Handoff</td></tr><tr><td class="op-label">Problem Solve</td><td>1.5</td><td>1</td><td>1</td><td>1.5</td><td>0</td><td>WIP Controlled</td></tr></tbody></table><table class="hist-ops" style="margin-top:6px"><thead><tr><th>Buffer</th><th>SOS</th><th>EOS</th><th>Chg</th><th>SOS Status</th><th>EOS Status</th></tr></thead><tbody><tr><td class="op-label">AR WIP</td><td>0</td><td>0</td><td>0</td><td>✗ Below Min</td><td>✗ Below Min</td></tr><tr><td class="op-label">Sort WIP</td><td>0</td><td>0</td><td>0</td><td>✓ OK</td><td>✓ OK</td></tr><tr><td class="op-label">Tech WIP</td><td>0</td><td>0</td><td>0</td><td>✓ OK</td><td>✓ OK</td></tr><tr><td class="op-label">Blancco</td><td>0</td><td>0</td><td>0</td><td>✓ OK</td><td>✓ OK</td></tr></tbody></table><table class="hist-ops" style="margin-top:6px"><thead><tr><th>AA</th><th>Op</th><th>Hrs</th><th>Units</th><th>UPH</th><th>Gap</th></tr></thead><tbody><tr><td>-</td><td>undefined</td><td>undefined</td><td>undefined</td><td>undefined</td><td>undefined</td></tr><tr><td>-</td><td>undefined</td><td>undefined</td><td>undefined</td><td>undefined</td><td>undefined</td></tr></tbody></table></div>
-    </div></div>
+<div id="historyList"></div>
 </div>
 
 <!-- ===== REFERENCE TAB ===== -->
