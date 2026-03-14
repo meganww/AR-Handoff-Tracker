@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en"><script src="Shift%20Handoff%20Tracker_files/sentryjs-api-injected.js" id="sentryjs-api-injected"></script><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shift Handoff Tracker</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#1a1a2e;color:#e0e0e0;padding:0}
+.tabs{display:flex;background:#0f1a30;border-bottom:2px solid #0f3460}
+.tab{padding:12px 24px;cursor:pointer;font-weight:bold;font-size:14px;color:#888;border-bottom:3px solid transparent}
+.tab.active{color:#00d4ff;border-bottom-color:#00d4ff}
+.tab:hover{color:#ccc}
+.tab-content{display:none;padding:20px;max-width:1400px;margin:0 auto}
+.tab-content.active{display:block}
+h1{text-align:center;color:#00d4ff;margin-bottom:5px;font-size:22px}
+h2{color:#00d4ff;font-size:15px;margin:15px 0 8px;border-bottom:1px solid #0f3460;padding-bottom:4px}
+.header-row{display:flex;justify-content:center;gap:12px;align-items:center;margin-bottom:15px;flex-wrap:wrap}
+.header-row label{font-size:13px}
+.header-row input,.header-row select{background:#16213e;color:#e0e0e0;border:1px solid #0f3460;padding:5px 8px;border-radius:4px}
+.btn{padding:5px 12px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;white-space:nowrap}
+.btn-p{background:#0f3460;color:#00d4ff}.btn-p:hover{background:#1a4a80}
+.btn-s{background:#1b5e20;color:#00e676}.btn-s:hover{background:#2e7d32}
+.btn-d{background:#4a0000;color:#ff5252}.btn-d:hover{background:#6a0000}
+table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:12px}
+th{background:#0f3460;padding:6px 4px;text-align:center;border:1px solid #1a1a4e;white-space:nowrap}
+td{padding:5px 4px;text-align:center;border:1px solid #1a1a4e;background:#16213e}
+td input[type=number],td input[type=text]{width:60px;background:#1a1a3e;color:#e0e0e0;border:1px solid #0f3460;padding:3px;text-align:center;border-radius:3px;font-size:12px}
+td input[type=text]{width:90px}
+.op-label{font-weight:bold;color:#00d4ff;text-align:left;padding-left:8px;white-space:nowrap}
+.pass{color:#00e676;font-weight:bold}.fail{color:#ff5252;font-weight:bold}.warn{color:#ffab00;font-weight:bold}
+.overall-box{text-align:center;padding:10px;border-radius:6px;font-size:16px;font-weight:bold;margin:10px 0;border:2px solid}
+.o-ok{background:#1b5e20;border-color:#00e676;color:#00e676}
+.o-warn{background:#4a3800;border-color:#ffab00;color:#ffab00}
+.o-bad{background:#4a0000;border-color:#ff5252;color:#ff5252}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:10px 0}
+.info-card{background:#16213e;border:1px solid #0f3460;border-radius:6px;padding:10px;font-size:12px}
+.info-card h3{color:#00d4ff;font-size:13px;margin-bottom:6px}
+.hist-entry{background:#16213e;border:1px solid #0f3460;border-radius:6px;padding:10px;margin-bottom:6px;cursor:pointer;font-size:12px}
+.hist-entry:hover{border-color:#00d4ff}
+.hist-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px}
+.hist-date{color:#00d4ff;font-weight:bold}
+.hist-detail{display:none;margin-top:8px;font-size:11px}
+.hist-entry.expanded .hist-detail{display:block}
+.hist-ops td,.hist-ops th{padding:3px 4px;font-size:11px}
+.filter-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap;font-size:13px}
+.filter-row select,.filter-row input{background:#16213e;color:#e0e0e0;border:1px solid #0f3460;padding:4px 8px;border-radius:4px;font-size:12px}
+.trend-bar{display:flex;align-items:center;gap:4px;margin:2px 0}
+.trend-fill{height:12px;border-radius:2px;min-width:2px}
+.trend-label{font-size:10px;white-space:nowrap}
+@media print{
+  body{background:#fff;color:#000}
+  th{background:#ddd;color:#000;border-color:#999}
+  td{background:#fff;border-color:#999}
+  td input{border:none;background:transparent;color:#000}
+  .tabs,.btn{display:none}
+  .tab-content{display:block!important}
+  .pass{color:#006400}.fail{color:#c00}.warn{color:#b8860b}
+}
+</style>
+</head>
+<body>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('input')">📋 Daily Input</div>
+  <div class="tab" onclick="switchTab('history')">📊 History &amp; Trends</div>
+  <div class="tab" onclick="switchTab('ref')">📖 Reference</div>
+</div>
+
+<!-- ===== DAILY INPUT TAB ===== -->
+<div id="tab-input" class="tab-content active">
+<h1>Shift Handoff Tracker</h1>
+<div class="header-row">
+  <label>Date: <input type="date" id="trackDate" value="2026-03-14"></label>
+  <label>Shift: <select id="shiftSelect"><option selected="selected">BHN</option><option>FHN</option><option>FHD</option><option>BHD</option></select></label>
+  <button class="btn btn-s" onclick="saveShift()">💾 Save Shift</button>
+  <button class="btn btn-p" onclick="exportCSV()">📊 CSV</button>
+  <button class="btn btn-p" onclick="window.print()">🖨️ Print</button>
+  <button class="btn btn-d" onclick="clearForm()">🗑️ Clear</button>
+</div>
+
+<h2>WIP Pallet Tracking (Build-Rate Operations)</h2>
+<table>
+  <thead><tr>
+    <th>Operation</th><th>SOS</th><th>WIP Build</th><th>Processed</th><th>EOS</th>
+    <th>Expected Build</th><th>Net Change</th><th>Handoff Check</th><th>Status</th>
+  </tr></thead>
+  <tbody id="palletBody"><tr><td class="op-label">Refurb</td>
+    <td><input type="number" step="0.1" id="p-sos-0" value="0"></td>
+    <td><input type="number" step="0.1" id="p-build-0" value="0"></td>
+    <td><input type="number" step="0.1" id="p-proc-0" value="0"></td>
+    <td id="p-eos-0">0</td>
+    <td style="color:#888">1.5/shift</td>
+    <td id="p-net-0">0</td>
+    <td id="p-hand-0" class="pass">✓ Clean Handoff</td>
+    <td id="p-stat-0" class="pass">Clean Handoff</td></tr><tr><td class="op-label">Shoes</td>
+    <td><input type="number" step="0.1" id="p-sos-1" value="0"></td>
+    <td><input type="number" step="0.1" id="p-build-1" value="0"></td>
+    <td><input type="number" step="0.1" id="p-proc-1" value="0"></td>
+    <td id="p-eos-1">0</td>
+    <td style="color:#888">1/shift</td>
+    <td id="p-net-1">0</td>
+    <td id="p-hand-1" class="pass">✓ Clean Handoff</td>
+    <td id="p-stat-1" class="pass">Clean Handoff</td></tr><tr><td class="op-label">Problem Solve</td>
+    <td><input type="number" step="0.1" id="p-sos-2" value="0"></td>
+    <td><input type="number" step="0.1" id="p-build-2" value="0"></td>
+    <td><input type="number" step="0.1" id="p-proc-2" value="0"></td>
+    <td id="p-eos-2">0</td>
+    <td style="color:#888">0.5/shift</td>
+    <td id="p-net-2">0</td>
+    <td id="p-hand-2" class="pass">✓ Clean Handoff</td>
+    <td id="p-stat-2" class="pass">Clean Handoff</td></tr></tbody>
+</table>
+
+<h2>Buffer / WIP Checks</h2>
+<table>
+  <thead><tr>
+    <th>Area</th><th>SOS Count</th><th>EOS Count</th><th>Min</th><th>Max</th><th>SOS Status</th><th>EOS Status</th><th>Change</th>
+  </tr></thead>
+  <tbody id="bufferBody"><tr><td class="op-label">AR WIP</td>
+    <td><input type="number" step="0.1" id="b-sos-0" value="0"></td>
+    <td><input type="number" step="0.1" id="b-eos-0" value="0"></td>
+    <td style="color:#888">3</td>
+    <td style="color:#888">8</td>
+    <td id="b-sstat-0" class="fail">✗ Below Min</td>
+    <td id="b-estat-0" class="fail">✗ Below Min</td>
+    <td id="b-chg-0">0</td></tr><tr><td class="op-label">Sort WIP</td>
+    <td><input type="number" step="0.1" id="b-sos-1" value="0"></td>
+    <td><input type="number" step="0.1" id="b-eos-1" value="0"></td>
+    <td style="color:#888">0</td>
+    <td style="color:#888">4</td>
+    <td id="b-sstat-1" class="pass">✓ OK</td>
+    <td id="b-estat-1" class="pass">✓ OK</td>
+    <td id="b-chg-1">0</td></tr><tr><td class="op-label">Tech WIP</td>
+    <td><input type="number" step="0.1" id="b-sos-2" value="0"></td>
+    <td><input type="number" step="0.1" id="b-eos-2" value="0"></td>
+    <td style="color:#888">0</td>
+    <td style="color:#888">4</td>
+    <td id="b-sstat-2" class="pass">✓ OK</td>
+    <td id="b-estat-2" class="pass">✓ OK</td>
+    <td id="b-chg-2">0</td></tr><tr><td class="op-label">Blancco</td>
+    <td><input type="number" step="0.1" id="b-sos-3" value="0"></td>
+    <td><input type="number" step="0.1" id="b-eos-3" value="0"></td>
+    <td style="color:#888">0</td>
+    <td style="color:#888">∞</td>
+    <td id="b-sstat-3" class="pass">✓ OK</td>
+    <td id="b-estat-3" class="pass">✓ OK</td>
+    <td id="b-chg-3">0</td></tr></tbody>
+</table>
+
+<h2>AA Productivity</h2>
+<table>
+  <thead><tr><th>AA Name</th><th>Refurb</th><th>Shoes</th><th>PS</th><th>Total</th><th>Rating</th></tr></thead>
+  <tbody id="aaBody"><tr id="aa-0"><td><input type="text" id="aa-name-0" placeholder="Name" style="width:90px"></td>
+    <td><input type="number" id="aa-ref-0" value="0" style="width:50px"></td>
+    <td><input type="number" id="aa-sh-0" value="0" style="width:50px"></td>
+    <td><input type="number" id="aa-ps-0" value="0" style="width:50px"></td>
+    <td id="aa-tot-0">0</td><td id="aa-rate-0" class="fail">0% Low</td></tr><tr id="aa-1"><td><input type="text" id="aa-name-1" placeholder="Name" style="width:90px"></td>
+    <td><input type="number" id="aa-ref-1" value="0" style="width:50px"></td>
+    <td><input type="number" id="aa-sh-1" value="0" style="width:50px"></td>
+    <td><input type="number" id="aa-ps-1" value="0" style="width:50px"></td>
+    <td id="aa-tot-1">0</td><td id="aa-rate-1" class="fail">0% Low</td></tr></tbody>
+</table>
+<button class="btn btn-p" onclick="addAA()" style="margin-top:4px">+ Add AA</button>
+
+<div id="overallBox" class="overall-box o-bad">NEEDS ATTENTION (2 issues)</div>
+</div>
+
+<!-- ===== HISTORY TAB ===== -->
+<div id="tab-history" class="tab-content">
+<h1>Shift History &amp; Trends</h1>
+<div class="filter-row">
+  <label>Filter Shift: <select id="histShift"><option value="" selected="selected">All</option><option>BHN</option><option>FHN</option><option>FHD</option><option>BHD</option></select></label>
+  <label>From: <input type="date" id="histFrom" value="2026-03-14"></label>
+  <label>To: <input type="date" id="histTo" value="2026-03-14"></label>
+  <button class="btn btn-p" onclick="renderHistory()">Apply</button>
+  <button class="btn btn-d" onclick="if(confirm('Delete ALL history?')){localStorage.removeItem('shiftHist');renderHistory()}">Clear All History</button>
+</div>
+<div id="historyList"><p style="color:#666">No history found.</p></div>
+</div>
+
+<!-- ===== REFERENCE TAB ===== -->
+<div id="tab-ref" class="tab-content">
+<h1>Reference &amp; Thresholds</h1>
+<div class="info-grid">
+  <div class="info-card">
+    <h3>Pallet Build Rates (per shift)</h3>
+    <table><tbody><tr><th>Operation</th><th>Builds By</th><th>Goal EOS</th></tr>
+    <tr><td>Shoes</td><td>+1.0</td><td>0 (ideal)</td></tr>
+    <tr><td>Refurb</td><td>+1.5</td><td>0 (ideal)</td></tr>
+    <tr><td>Problem Solve</td><td>+0.5</td><td>0 (ideal)</td></tr></tbody></table>
+    <p style="margin-top:6px;font-size:11px;color:#aaa">EOS ≤ SOS = WIP Controlled. EOS &gt; SOS = WIP Increasing.</p>
+  </div>
+  <div class="info-card">
+    <h3>Buffer Thresholds</h3>
+    <table><tbody><tr><th>Area</th><th>Min</th><th>Max</th></tr>
+    <tr><td>AR WIP</td><td>3</td><td>8</td></tr>
+    <tr><td>Sort WIP</td><td>0</td><td>4</td></tr>
+    <tr><td>Tech WIP</td><td>0</td><td>4</td></tr>
+    <tr><td>Blancco</td><td>0</td><td>∞</td></tr></tbody></table>
+  </div>
+  <div class="info-card">
+    <h3>Handoff Status Logic</h3>
+    <table>
+    <tbody><tr><td>EOS ≤ SOS</td><td class="pass">Controlled</td></tr>
+    <tr><td>EOS = SOS + expected build</td><td class="warn">Monitor</td></tr>
+    <tr><td>EOS &gt; SOS + expected build</td><td class="fail">Action Needed</td></tr>
+    <tr><td>EOS = 0</td><td class="pass">Clean Handoff ✓</td></tr></tbody></table>
+  </div>
+  <div class="info-card">
+    <h3>AA Productivity</h3>
+    <table>
+    <tbody><tr><td>≥ 90%</td><td class="pass">High</td></tr>
+    <tr><td>70–89%</td><td class="warn">Acceptable</td></tr>
+    <tr><td>&lt; 70%</td><td class="fail">Low</td></tr></tbody></table>
+    <p style="margin-top:6px;font-size:11px;color:#aaa">Baseline: 10hr shift × 12 UPH = 120 units</p>
+  </div>
+</div>
+</div>
+
+<script>
+// === CONFIG ===
+const PALLETS=[
+  {name:'Refurb',buildRate:1.5},
+  {name:'Shoes',buildRate:1.0},
+  {name:'Problem Solve',buildRate:0.5}
+];
+const BUFFERS=[
+  {name:'AR WIP',min:3,max:8},
+  {name:'Sort WIP',min:0,max:4},
+  {name:'Tech WIP',min:0,max:4},
+  {name:'Blancco',min:0,max:Infinity}
+];
+const SHIFT_TARGET=120; // 10hrs * 12 UPH
+
+// === TAB SWITCHING ===
+function switchTab(id){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.querySelectorAll('.tab')[{input:0,history:1,ref:2}[id]].classList.add('active');
+  if(id==='history')renderHistory();
+}
+
+// === INIT DATE ===
+document.getElementById('trackDate').valueAsDate=new Date();
+
+// === BUILD PALLET ROWS ===
+const palletBody=document.getElementById('palletBody');
+PALLETS.forEach((p,i)=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td class="op-label">${p.name}</td>
+    <td><input type="number" step="0.1" id="p-sos-${i}" value="0"></td>
+    <td><input type="number" step="0.1" id="p-build-${i}" value="0"></td>
+    <td><input type="number" step="0.1" id="p-proc-${i}" value="0"></td>
+    <td id="p-eos-${i}">0</td>
+    <td style="color:#888">${p.buildRate}/shift</td>
+    <td id="p-net-${i}">0</td>
+    <td id="p-hand-${i}">-</td>
+    <td id="p-stat-${i}">-</td>`;
+  palletBody.appendChild(tr);
+});
+palletBody.addEventListener('input',calcAll);
+
+// === BUILD BUFFER ROWS ===
+const bufferBody=document.getElementById('bufferBody');
+BUFFERS.forEach((b,i)=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td class="op-label">${b.name}</td>
+    <td><input type="number" step="0.1" id="b-sos-${i}" value="0"></td>
+    <td><input type="number" step="0.1" id="b-eos-${i}" value="0"></td>
+    <td style="color:#888">${b.min}</td>
+    <td style="color:#888">${b.max===Infinity?'∞':b.max}</td>
+    <td id="b-sstat-${i}">-</td>
+    <td id="b-estat-${i}">-</td>
+    <td id="b-chg-${i}">0</td>`;
+  bufferBody.appendChild(tr);
+});
+bufferBody.addEventListener('input',calcAll);
+
+// === AA PRODUCTIVITY ===
+const aaBody=document.getElementById('aaBody');
+let aaCount=0;
+function addAA(){
+  const id=aaCount++;
+  const tr=document.createElement('tr');tr.id='aa-'+id;
+  tr.innerHTML=`<td><input type="text" id="aa-name-${id}" placeholder="Name" style="width:90px"></td>
+    <td><input type="number" id="aa-ref-${id}" value="0" style="width:50px"></td>
+    <td><input type="number" id="aa-sh-${id}" value="0" style="width:50px"></td>
+    <td><input type="number" id="aa-ps-${id}" value="0" style="width:50px"></td>
+    <td id="aa-tot-${id}">0</td><td id="aa-rate-${id}">-</td>`;
+  aaBody.appendChild(tr);
+}
+addAA();addAA();
+aaBody.addEventListener('input',calcAll);
+
+// === CALCULATIONS ===
+function V(id){return parseFloat(document.getElementById(id).value)||0}
+function R(n){return Math.round(n*100)/100}
+
+function calcAll(){
+  let issues=0,warnings=0;
+
+  // Pallets
+  PALLETS.forEach((p,i)=>{
+    const sos=V(`p-sos-${i}`),build=V(`p-build-${i}`),proc=V(`p-proc-${i}`);
+    const eos=sos+build-proc;
+    const net=eos-sos;
+    const expectedMax=sos+p.buildRate;
+
+    document.getElementById(`p-eos-${i}`).textContent=R(eos);
+    document.getElementById(`p-net-${i}`).textContent=R(net);
+
+    const hEl=document.getElementById(`p-hand-${i}`);
+    const sEl=document.getElementById(`p-stat-${i}`);
+
+    if(eos===0){
+      hEl.textContent='✓ Clean Handoff';hEl.className='pass';
+      sEl.textContent='Clean Handoff';sEl.className='pass';
+    }else if(eos<=sos){
+      hEl.textContent='✓ Controlled';hEl.className='pass';
+      sEl.textContent='WIP Controlled';sEl.className='pass';
+    }else if(eos<=expectedMax){
+      hEl.textContent='⚠ Expected Growth';hEl.className='warn';
+      sEl.textContent='Monitor – Normal Build';sEl.className='warn';warnings++;
+    }else{
+      hEl.textContent='✗ Over Expected';hEl.className='fail';
+      sEl.textContent='Action – WIP Increasing';sEl.className='fail';issues++;
+    }
+    if(eos<0){
+      hEl.textContent='✗ Negative EOS';hEl.className='fail';
+      sEl.textContent='Data Error';sEl.className='fail';issues++;
+    }
+  });
+
+  // Buffers
+  BUFFERS.forEach((b,i)=>{
+    const sos=V(`b-sos-${i}`),eos=V(`b-eos-${i}`);
+    const chg=eos-sos;
+    document.getElementById(`b-chg-${i}`).textContent=R(chg);
+
+    [['sstat',sos],['estat',eos]].forEach(([sfx,val])=>{
+      const el=document.getElementById(`b-${sfx}-${i}`);
+      if(val<b.min){el.textContent='✗ Below Min';el.className='fail';issues++;}
+      else if(val>b.max){el.textContent='✗ Over Max';el.className='fail';issues++;}
+      else if(b.max!==Infinity&&val>=b.max*0.85){el.textContent='⚠ Near Max';el.className='warn';warnings++;}
+      else{el.textContent='✓ OK';el.className='pass';}
+    });
+  });
+
+  // AA
+  aaBody.querySelectorAll('tr').forEach(tr=>{
+    const id=tr.id.split('-')[1];
+    const tot=V(`aa-ref-${id}`)+V(`aa-sh-${id}`)+V(`aa-ps-${id}`);
+    const pct=SHIFT_TARGET>0?(tot/SHIFT_TARGET)*100:0;
+    document.getElementById(`aa-tot-${id}`).textContent=tot;
+    const el=document.getElementById(`aa-rate-${id}`);
+    if(pct>=90){el.textContent=pct.toFixed(0)+'% High';el.className='pass';}
+    else if(pct>=70){el.textContent=pct.toFixed(0)+'% OK';el.className='warn';}
+    else{el.textContent=pct.toFixed(0)+'% Low';el.className='fail';}
+  });
+
+  // Overall
+  const box=document.getElementById('overallBox');
+  if(issues>0){box.textContent='NEEDS ATTENTION ('+issues+' issues)';box.className='overall-box o-bad';}
+  else if(warnings>0){box.textContent='MONITOR ('+warnings+' warnings)';box.className='overall-box o-warn';}
+  else{box.textContent='ALL CLEAR – Good Handoff';box.className='overall-box o-ok';}
+}
+
+// === SAVE / LOAD / HISTORY ===
+function getHistory(){return JSON.parse(localStorage.getItem('shiftHist')||'{}');}
+function putHistory(h){localStorage.setItem('shiftHist',JSON.stringify(h));}
+
+function snapshot(){
+  const pallets=PALLETS.map((_,i)=>({
+    sos:V(`p-sos-${i}`),build:V(`p-build-${i}`),proc:V(`p-proc-${i}`),
+    eos:parseFloat(document.getElementById(`p-eos-${i}`).textContent)||0,
+    net:parseFloat(document.getElementById(`p-net-${i}`).textContent)||0,
+    hand:document.getElementById(`p-hand-${i}`).textContent,
+    stat:document.getElementById(`p-stat-${i}`).textContent
+  }));
+  const buffers=BUFFERS.map((_,i)=>({
+    sos:V(`b-sos-${i}`),eos:V(`b-eos-${i}`),
+    chg:parseFloat(document.getElementById(`b-chg-${i}`).textContent)||0,
+    sstat:document.getElementById(`b-sstat-${i}`).textContent,
+    estat:document.getElementById(`b-estat-${i}`).textContent
+  }));
+  const aas=[];
+  aaBody.querySelectorAll('tr').forEach(tr=>{
+    const id=tr.id.split('-')[1];
+    aas.push({name:V(`aa-name-${id}`)||document.getElementById(`aa-name-${id}`).value,
+      ref:V(`aa-ref-${id}`),sh:V(`aa-sh-${id}`),ps:V(`aa-ps-${id}`),
+      tot:parseFloat(document.getElementById(`aa-tot-${id}`).textContent)||0});
+  });
+  return{
+    date:document.getElementById('trackDate').value,
+    shift:document.getElementById('shiftSelect').value,
+    pallets,buffers,aas,
+    overall:document.getElementById('overallBox').textContent,
+    ts:Date.now()
+  };
+}
+
+function saveShift(){
+  calcAll();
+  const snap=snapshot();
+  const key=snap.date+'_'+snap.shift;
+  const h=getHistory();
+  h[key]=snap;
+  putHistory(h);
+  alert('Saved: '+snap.date+' '+snap.shift);
+}
+
+function loadSnap(key){
+  const h=getHistory();const d=h[key];if(!d)return;
+  document.getElementById('trackDate').value=d.date;
+  document.getElementById('shiftSelect').value=d.shift;
+  d.pallets.forEach((p,i)=>{
+    document.getElementById(`p-sos-${i}`).value=p.sos;
+    document.getElementById(`p-build-${i}`).value=p.build;
+    document.getElementById(`p-proc-${i}`).value=p.proc;
+  });
+  d.buffers.forEach((b,i)=>{
+    document.getElementById(`b-sos-${i}`).value=b.sos;
+    document.getElementById(`b-eos-${i}`).value=b.eos;
+  });
+  aaBody.innerHTML='';aaCount=0;
+  (d.aas||[]).forEach(aa=>{
+    addAA();const id=aaCount-1;
+    document.getElementById(`aa-name-${id}`).value=aa.name||'';
+    document.getElementById(`aa-ref-${id}`).value=aa.ref;
+    document.getElementById(`aa-sh-${id}`).value=aa.sh;
+    document.getElementById(`aa-ps-${id}`).value=aa.ps;
+  });
+  if(!d.aas||!d.aas.length){addAA();addAA();}
+  calcAll();
+  switchTab('input');
+}
+
+function clearForm(){
+  if(!confirm('Clear form? (History is preserved)'))return;
+  document.querySelectorAll('#palletBody input, #bufferBody input').forEach(el=>el.value=0);
+  aaBody.innerHTML='';aaCount=0;addAA();addAA();
+  calcAll();
+}
+
+// === HISTORY RENDERING ===
+function renderHistory(){
+  const h=getHistory();
+  const shiftF=document.getElementById('histShift').value;
+  const fromF=document.getElementById('histFrom').value;
+  const toF=document.getElementById('histTo').value;
+  let entries=Object.entries(h).sort((a,b)=>b[1].ts-a[1].ts);
+
+  if(shiftF)entries=entries.filter(([,d])=>d.shift===shiftF);
+  if(fromF)entries=entries.filter(([,d])=>d.date>=fromF);
+  if(toF)entries=entries.filter(([,d])=>d.date<=toF);
+
+  const list=document.getElementById('historyList');
+  if(!entries.length){list.innerHTML='<p style="color:#666">No history found.</p>';return;}
+
+  list.innerHTML=entries.map(([key,d])=>{
+    const cls=d.overall.includes('CLEAR')?'pass':d.overall.includes('MONITOR')?'warn':'fail';
+    let detail='<table class="hist-ops"><thead><tr><th>Operation</th><th>SOS</th><th>Build</th><th>Proc</th><th>EOS</th><th>Net</th><th>Status</th></tr></thead><tbody>';
+    d.pallets.forEach((p,i)=>{
+      detail+=`<tr><td class="op-label">${PALLETS[i].name}</td><td>${p.sos}</td><td>${p.build}</td><td>${p.proc}</td><td>${p.eos}</td><td>${p.net}</td><td>${p.stat}</td></tr>`;
+    });
+    detail+='</tbody></table>';
+    detail+='<table class="hist-ops" style="margin-top:6px"><thead><tr><th>Buffer</th><th>SOS</th><th>EOS</th><th>Chg</th><th>SOS Status</th><th>EOS Status</th></tr></thead><tbody>';
+    d.buffers.forEach((b,i)=>{
+      detail+=`<tr><td class="op-label">${BUFFERS[i].name}</td><td>${b.sos}</td><td>${b.eos}</td><td>${b.chg}</td><td>${b.sstat}</td><td>${b.estat}</td></tr>`;
+    });
+    detail+='</tbody></table>';
+    if(d.aas&&d.aas.length){
+      detail+='<table class="hist-ops" style="margin-top:6px"><thead><tr><th>AA</th><th>Ref</th><th>Shoes</th><th>PS</th><th>Total</th></tr></thead><tbody>';
+      d.aas.forEach(a=>{detail+=`<tr><td>${a.name||'-'}</td><td>${a.ref}</td><td>${a.sh}</td><td>${a.ps}</td><td>${a.tot}</td></tr>`;});
+      detail+='</tbody></table>';
+    }
+    return`<div class="hist-entry" onclick="this.classList.toggle('expanded')">
+      <div class="hist-header">
+        <span class="hist-date">${d.date} – ${d.shift}</span>
+        <span class="${cls}">${d.overall}</span>
+        <span>
+          <button class="btn btn-p" onclick="event.stopPropagation();loadSnap('${key}')">Load</button>
+          <button class="btn btn-d" onclick="event.stopPropagation();delHist('${key}')">✗</button>
+        </span>
+      </div>
+      <div class="hist-detail">${detail}</div>
+    </div>`;
+  }).join('');
+}
+
+function delHist(key){
+  if(!confirm('Delete this entry?'))return;
+  const h=getHistory();delete h[key];putHistory(h);renderHistory();
+}
+
+// === CSV EXPORT ===
+function exportCSV(){
+  calcAll();const s=snapshot();
+  let csv='Shift Handoff Report\nDate,'+s.date+'\nShift,'+s.shift+'\n\n';
+  csv+='PALLET TRACKING\nOperation,SOS,WIP Build,Processed,EOS,Net Change,Handoff,Status\n';
+  s.pallets.forEach((p,i)=>{csv+=`${PALLETS[i].name},${p.sos},${p.build},${p.proc},${p.eos},${p.net},${p.hand},${p.stat}\n`;});
+  csv+='\nBUFFER CHECKS\nArea,SOS,EOS,Change,SOS Status,EOS Status\n';
+  s.buffers.forEach((b,i)=>{csv+=`${BUFFERS[i].name},${b.sos},${b.eos},${b.chg},${b.sstat},${b.estat}\n`;});
+  csv+='\nAA PRODUCTIVITY\nName,Refurb,Shoes,PS,Total\n';
+  s.aas.forEach(a=>{csv+=`${a.name||'-'},${a.ref},${a.sh},${a.ps},${a.tot}\n`;});
+  csv+='\nOverall,'+s.overall+'\n';
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`shift_${s.date}_${s.shift}.csv`;a.click();
+}
+
+calcAll();
+</script>
+
+
+</body></html>
