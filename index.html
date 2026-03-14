@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><script src="Shift%20Handoff%20Tracker_files/sentryjs-api-injected.js" id="sentryjs-api-injected"></script><head>
+<html lang="en"><script src="index_files/sentryjs-api-injected.js" id="sentryjs-api-injected"></script><head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,14 +86,14 @@ td input[type=text]{width:90px}
     <th>Expected Build</th><th>Net Change</th><th>Handoff Check</th><th>Status</th>
   </tr></thead>
   <tbody id="palletBody"><tr><td class="op-label">Refurb</td>
-    <td><input type="number" step="0.1" id="p-sos-0" value="0"></td>
-    <td><input type="number" step="0.1" id="p-build-0" value="0"></td>
-    <td><input type="number" step="0.1" id="p-proc-0" value="0"></td>
-    <td id="p-eos-0">0</td>
+    <td><input type="number" step="0.1" id="p-sos-0" value="8"></td>
+    <td><input type="number" step="0.1" id="p-build-0" value="1"></td>
+    <td><input type="number" step="0.1" id="p-proc-0" value="2"></td>
+    <td id="p-eos-0">7</td>
     <td style="color:#888">1.5/shift</td>
-    <td id="p-net-0">0</td>
-    <td id="p-hand-0" class="pass">✓ Clean Handoff</td>
-    <td id="p-stat-0" class="pass">Clean Handoff</td></tr><tr><td class="op-label">Shoes</td>
+    <td id="p-net-0">-1</td>
+    <td id="p-hand-0" class="pass">✓ Controlled</td>
+    <td id="p-stat-0" class="pass">WIP Controlled</td></tr><tr><td class="op-label">Shoes</td>
     <td><input type="number" step="0.1" id="p-sos-1" value="0"></td>
     <td><input type="number" step="0.1" id="p-build-1" value="0"></td>
     <td><input type="number" step="0.1" id="p-proc-1" value="0"></td>
@@ -102,14 +102,14 @@ td input[type=text]{width:90px}
     <td id="p-net-1">0</td>
     <td id="p-hand-1" class="pass">✓ Clean Handoff</td>
     <td id="p-stat-1" class="pass">Clean Handoff</td></tr><tr><td class="op-label">Problem Solve</td>
-    <td><input type="number" step="0.1" id="p-sos-2" value="0"></td>
-    <td><input type="number" step="0.1" id="p-build-2" value="0"></td>
-    <td><input type="number" step="0.1" id="p-proc-2" value="0"></td>
-    <td id="p-eos-2">0</td>
+    <td><input type="number" step="0.1" id="p-sos-2" value="1.5"></td>
+    <td><input type="number" step="0.1" id="p-build-2" value="1"></td>
+    <td><input type="number" step="0.1" id="p-proc-2" value="1"></td>
+    <td id="p-eos-2">1.5</td>
     <td style="color:#888">0.5/shift</td>
     <td id="p-net-2">0</td>
-    <td id="p-hand-2" class="pass">✓ Clean Handoff</td>
-    <td id="p-stat-2" class="pass">Clean Handoff</td></tr></tbody>
+    <td id="p-hand-2" class="pass">✓ Controlled</td>
+    <td id="p-stat-2" class="pass">WIP Controlled</td></tr></tbody>
 </table>
 
 <h2>Buffer / WIP Checks</h2>
@@ -150,16 +150,20 @@ td input[type=text]{width:90px}
 
 <h2>AA Productivity</h2>
 <table>
-  <thead><tr><th>AA Name</th><th>Refurb</th><th>Shoes</th><th>PS</th><th>Total</th><th>Rating</th></tr></thead>
+  <thead><tr><th>AA Name</th><th>Operation</th><th>Hours</th><th>Units</th><th>UPH</th><th>Target</th><th>Gap</th></tr></thead>
   <tbody id="aaBody"><tr id="aa-0"><td><input type="text" id="aa-name-0" placeholder="Name" style="width:90px"></td>
-    <td><input type="number" id="aa-ref-0" value="0" style="width:50px"></td>
-    <td><input type="number" id="aa-sh-0" value="0" style="width:50px"></td>
-    <td><input type="number" id="aa-ps-0" value="0" style="width:50px"></td>
-    <td id="aa-tot-0">0</td><td id="aa-rate-0" class="fail">0% Low</td></tr><tr id="aa-1"><td><input type="text" id="aa-name-1" placeholder="Name" style="width:90px"></td>
-    <td><input type="number" id="aa-ref-1" value="0" style="width:50px"></td>
-    <td><input type="number" id="aa-sh-1" value="0" style="width:50px"></td>
-    <td><input type="number" id="aa-ps-1" value="0" style="width:50px"></td>
-    <td id="aa-tot-1">0</td><td id="aa-rate-1" class="fail">0% Low</td></tr></tbody>
+    <td><select id="aa-op-0" style="background:#1a1a3e;color:#e0e0e0;border:1px solid #0f3460;padding:3px;border-radius:3px;font-size:12px"><option selected="selected">Shoes</option><option>Refurb</option><option>Problem Solve</option><option>AR Grading</option><option>Tech</option><option>Sort</option></select></td>
+    <td><input type="number" id="aa-hrs-0" value="10" step="0.5" style="width:50px"></td>
+    <td><input type="number" id="aa-units-0" value="0" style="width:55px"></td>
+    <td id="aa-uph-0">0</td>
+    <td id="aa-tgt-0">6</td>
+    <td id="aa-gap-0" class="fail">-6</td></tr><tr id="aa-1"><td><input type="text" id="aa-name-1" placeholder="Name" style="width:90px"></td>
+    <td><select id="aa-op-1" style="background:#1a1a3e;color:#e0e0e0;border:1px solid #0f3460;padding:3px;border-radius:3px;font-size:12px"><option selected="selected">Shoes</option><option>Refurb</option><option>Problem Solve</option><option>AR Grading</option><option>Tech</option><option>Sort</option></select></td>
+    <td><input type="number" id="aa-hrs-1" value="10" step="0.5" style="width:50px"></td>
+    <td><input type="number" id="aa-units-1" value="0" style="width:55px"></td>
+    <td id="aa-uph-1">0</td>
+    <td id="aa-tgt-1">6</td>
+    <td id="aa-gap-1" class="fail">-6</td></tr></tbody>
 </table>
 <button class="btn btn-p" onclick="addAA()" style="margin-top:4px">+ Add AA</button>
 
@@ -171,12 +175,22 @@ td input[type=text]{width:90px}
 <h1>Shift History &amp; Trends</h1>
 <div class="filter-row">
   <label>Filter Shift: <select id="histShift"><option value="" selected="selected">All</option><option>BHN</option><option>FHN</option><option>FHD</option><option>BHD</option></select></label>
-  <label>From: <input type="date" id="histFrom" value="2026-03-14"></label>
-  <label>To: <input type="date" id="histTo" value="2026-03-14"></label>
+  <label>From: <input type="date" id="histFrom"></label>
+  <label>To: <input type="date" id="histTo"></label>
   <button class="btn btn-p" onclick="renderHistory()">Apply</button>
   <button class="btn btn-d" onclick="if(confirm('Delete ALL history?')){localStorage.removeItem('shiftHist');renderHistory()}">Clear All History</button>
 </div>
-<div id="historyList"><p style="color:#666">No history found.</p></div>
+<div id="historyList"><div class="hist-entry" onclick="this.classList.toggle('expanded')">
+      <div class="hist-header">
+        <span class="hist-date">2026-03-14 – BHN</span>
+        <span class="fail">NEEDS ATTENTION (2 issues)</span>
+        <span>
+          <button class="btn btn-p" onclick="event.stopPropagation();loadSnap('2026-03-14_BHN')">Load</button>
+          <button class="btn btn-d" onclick="event.stopPropagation();delHist('2026-03-14_BHN')">✗</button>
+        </span>
+      </div>
+      <div class="hist-detail"><table class="hist-ops"><thead><tr><th>Operation</th><th>SOS</th><th>Build</th><th>Proc</th><th>EOS</th><th>Net</th><th>Status</th></tr></thead><tbody><tr><td class="op-label">Refurb</td><td>8</td><td>1</td><td>2</td><td>7</td><td>-1</td><td>WIP Controlled</td></tr><tr><td class="op-label">Shoes</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>Clean Handoff</td></tr><tr><td class="op-label">Problem Solve</td><td>1.5</td><td>1</td><td>1</td><td>1.5</td><td>0</td><td>WIP Controlled</td></tr></tbody></table><table class="hist-ops" style="margin-top:6px"><thead><tr><th>Buffer</th><th>SOS</th><th>EOS</th><th>Chg</th><th>SOS Status</th><th>EOS Status</th></tr></thead><tbody><tr><td class="op-label">AR WIP</td><td>0</td><td>0</td><td>0</td><td>✗ Below Min</td><td>✗ Below Min</td></tr><tr><td class="op-label">Sort WIP</td><td>0</td><td>0</td><td>0</td><td>✓ OK</td><td>✓ OK</td></tr><tr><td class="op-label">Tech WIP</td><td>0</td><td>0</td><td>0</td><td>✓ OK</td><td>✓ OK</td></tr><tr><td class="op-label">Blancco</td><td>0</td><td>0</td><td>0</td><td>✓ OK</td><td>✓ OK</td></tr></tbody></table><table class="hist-ops" style="margin-top:6px"><thead><tr><th>AA</th><th>Op</th><th>Hrs</th><th>Units</th><th>UPH</th><th>Gap</th></tr></thead><tbody><tr><td>-</td><td>undefined</td><td>undefined</td><td>undefined</td><td>undefined</td><td>undefined</td></tr><tr><td>-</td><td>undefined</td><td>undefined</td><td>undefined</td><td>undefined</td><td>undefined</td></tr></tbody></table></div>
+    </div></div>
 </div>
 
 <!-- ===== REFERENCE TAB ===== -->
@@ -210,10 +224,14 @@ td input[type=text]{width:90px}
   <div class="info-card">
     <h3>AA Productivity</h3>
     <table>
-    <tbody><tr><td>≥ 90%</td><td class="pass">High</td></tr>
-    <tr><td>70–89%</td><td class="warn">Acceptable</td></tr>
-    <tr><td>&lt; 70%</td><td class="fail">Low</td></tr></tbody></table>
-    <p style="margin-top:6px;font-size:11px;color:#aaa">Baseline: 10hr shift × 12 UPH = 120 units</p>
+    <tbody><tr><th>Operation</th><th>Target UPH</th></tr>
+    <tr><td>Shoes</td><td>6</td></tr>
+    <tr><td>Refurb</td><td>10</td></tr>
+    <tr><td>Problem Solve</td><td>10</td></tr>
+    <tr><td>AR Grading</td><td>25</td></tr>
+    <tr><td>Tech</td><td>12</td></tr>
+    <tr><td>Sort</td><td>75</td></tr></tbody></table>
+    <p style="margin-top:6px;font-size:11px;color:#aaa">UPH = Units ÷ Hours | Gap = UPH - Target</p>
   </div>
 </div>
 </div>
@@ -231,7 +249,8 @@ const BUFFERS=[
   {name:'Tech WIP',min:0,max:4},
   {name:'Blancco',min:0,max:Infinity}
 ];
-const SHIFT_TARGET=120; // 10hrs * 12 UPH
+const SHIFT_TARGET=0; // unused
+const AA_OPS={Shoes:6,Refurb:10,'Problem Solve':10,'AR Grading':25,Tech:12,Sort:75};
 
 // === TAB SWITCHING ===
 function switchTab(id){
@@ -284,12 +303,16 @@ let aaCount=0;
 function addAA(){
   const id=aaCount++;
   const tr=document.createElement('tr');tr.id='aa-'+id;
+  const opts=Object.keys(AA_OPS).map(o=>`<option>${o}</option>`).join('');
   tr.innerHTML=`<td><input type="text" id="aa-name-${id}" placeholder="Name" style="width:90px"></td>
-    <td><input type="number" id="aa-ref-${id}" value="0" style="width:50px"></td>
-    <td><input type="number" id="aa-sh-${id}" value="0" style="width:50px"></td>
-    <td><input type="number" id="aa-ps-${id}" value="0" style="width:50px"></td>
-    <td id="aa-tot-${id}">0</td><td id="aa-rate-${id}">-</td>`;
+    <td><select id="aa-op-${id}" style="background:#1a1a3e;color:#e0e0e0;border:1px solid #0f3460;padding:3px;border-radius:3px;font-size:12px">${opts}</select></td>
+    <td><input type="number" id="aa-hrs-${id}" value="10" step="0.5" style="width:50px"></td>
+    <td><input type="number" id="aa-units-${id}" value="0" style="width:55px"></td>
+    <td id="aa-uph-${id}">0</td>
+    <td id="aa-tgt-${id}">${Object.values(AA_OPS)[0]}</td>
+    <td id="aa-gap-${id}">-</td>`;
   aaBody.appendChild(tr);
+  document.getElementById(`aa-op-${id}`).addEventListener('change',calcAll);
 }
 addAA();addAA();
 aaBody.addEventListener('input',calcAll);
@@ -351,13 +374,18 @@ function calcAll(){
   // AA
   aaBody.querySelectorAll('tr').forEach(tr=>{
     const id=tr.id.split('-')[1];
-    const tot=V(`aa-ref-${id}`)+V(`aa-sh-${id}`)+V(`aa-ps-${id}`);
-    const pct=SHIFT_TARGET>0?(tot/SHIFT_TARGET)*100:0;
-    document.getElementById(`aa-tot-${id}`).textContent=tot;
-    const el=document.getElementById(`aa-rate-${id}`);
-    if(pct>=90){el.textContent=pct.toFixed(0)+'% High';el.className='pass';}
-    else if(pct>=70){el.textContent=pct.toFixed(0)+'% OK';el.className='warn';}
-    else{el.textContent=pct.toFixed(0)+'% Low';el.className='fail';}
+    const op=document.getElementById(`aa-op-${id}`).value;
+    const hrs=V(`aa-hrs-${id}`)||10;
+    const units=V(`aa-units-${id}`);
+    const uph=hrs>0?Math.round((units/hrs)*10)/10:0;
+    const target=AA_OPS[op]||10;
+    const pct=target>0?(uph/target)*100:0;
+    document.getElementById(`aa-uph-${id}`).textContent=uph;
+    document.getElementById(`aa-tgt-${id}`).textContent=target;
+    const el=document.getElementById(`aa-gap-${id}`);
+    const gap=Math.round((uph-target)*10)/10;
+    if(gap>=0){el.textContent='+'+gap;el.className='pass';}
+    else{el.textContent=gap.toString();el.className='fail';}
   });
 
   // Overall
@@ -388,9 +416,11 @@ function snapshot(){
   const aas=[];
   aaBody.querySelectorAll('tr').forEach(tr=>{
     const id=tr.id.split('-')[1];
-    aas.push({name:V(`aa-name-${id}`)||document.getElementById(`aa-name-${id}`).value,
-      ref:V(`aa-ref-${id}`),sh:V(`aa-sh-${id}`),ps:V(`aa-ps-${id}`),
-      tot:parseFloat(document.getElementById(`aa-tot-${id}`).textContent)||0});
+    aas.push({name:document.getElementById(`aa-name-${id}`).value,
+      op:document.getElementById(`aa-op-${id}`).value,
+      hrs:V(`aa-hrs-${id}`),units:V(`aa-units-${id}`),
+      uph:document.getElementById(`aa-uph-${id}`).textContent,
+      gap:document.getElementById(`aa-gap-${id}`).textContent});
   });
   return{
     date:document.getElementById('trackDate').value,
@@ -428,9 +458,9 @@ function loadSnap(key){
   (d.aas||[]).forEach(aa=>{
     addAA();const id=aaCount-1;
     document.getElementById(`aa-name-${id}`).value=aa.name||'';
-    document.getElementById(`aa-ref-${id}`).value=aa.ref;
-    document.getElementById(`aa-sh-${id}`).value=aa.sh;
-    document.getElementById(`aa-ps-${id}`).value=aa.ps;
+    document.getElementById(`aa-op-${id}`).value=aa.op||'Shoes';
+    document.getElementById(`aa-hrs-${id}`).value=aa.hrs||10;
+    document.getElementById(`aa-units-${id}`).value=aa.units||0;
   });
   if(!d.aas||!d.aas.length){addAA();addAA();}
   calcAll();
@@ -472,8 +502,8 @@ function renderHistory(){
     });
     detail+='</tbody></table>';
     if(d.aas&&d.aas.length){
-      detail+='<table class="hist-ops" style="margin-top:6px"><thead><tr><th>AA</th><th>Ref</th><th>Shoes</th><th>PS</th><th>Total</th></tr></thead><tbody>';
-      d.aas.forEach(a=>{detail+=`<tr><td>${a.name||'-'}</td><td>${a.ref}</td><td>${a.sh}</td><td>${a.ps}</td><td>${a.tot}</td></tr>`;});
+      detail+='<table class="hist-ops" style="margin-top:6px"><thead><tr><th>AA</th><th>Op</th><th>Hrs</th><th>Units</th><th>UPH</th><th>Gap</th></tr></thead><tbody>';
+      d.aas.forEach(a=>{detail+=`<tr><td>${a.name||'-'}</td><td>${a.op}</td><td>${a.hrs}</td><td>${a.units}</td><td>${a.uph}</td><td>${a.gap}</td></tr>`;});
       detail+='</tbody></table>';
     }
     return`<div class="hist-entry" onclick="this.classList.toggle('expanded')">
@@ -503,8 +533,8 @@ function exportCSV(){
   s.pallets.forEach((p,i)=>{csv+=`${PALLETS[i].name},${p.sos},${p.build},${p.proc},${p.eos},${p.net},${p.hand},${p.stat}\n`;});
   csv+='\nBUFFER CHECKS\nArea,SOS,EOS,Change,SOS Status,EOS Status\n';
   s.buffers.forEach((b,i)=>{csv+=`${BUFFERS[i].name},${b.sos},${b.eos},${b.chg},${b.sstat},${b.estat}\n`;});
-  csv+='\nAA PRODUCTIVITY\nName,Refurb,Shoes,PS,Total\n';
-  s.aas.forEach(a=>{csv+=`${a.name||'-'},${a.ref},${a.sh},${a.ps},${a.tot}\n`;});
+  csv+='\nAA PRODUCTIVITY\nName,Operation,Hours,Units,UPH,Gap\n';
+  s.aas.forEach(a=>{csv+=`${a.name||'-'},${a.op},${a.hrs},${a.units},${a.uph},${a.gap}\n`;});
   csv+='\nOverall,'+s.overall+'\n';
   const blob=new Blob([csv],{type:'text/csv'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
